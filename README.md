@@ -3,6 +3,9 @@ volez bandcamp
 
 Un truc pour voler de la musique de bandcamp en shell.
 
+Politique machin
+----------------
+
 Bah, je sais que y'a ben des trippeux opensource qui disent que la propriété
 intellectuelle appartient à la société, mais pour moi, la propriété, c'est le
 vol, alors on s'assume, pi on reprend ce qui est à nous, c'est de la 
@@ -16,9 +19,17 @@ limite le bandwith à 50k/sec.
 
 Je sais pas si y'a un framework plus général pour pallier à l'internet sans
 flash, j'suis juste fucking tanné de grepper dans les pages pour les noms
-de fichiers.
+de fichiers. Si y'a d'autre shit pour faire ca, faites signe, je suis toute 
+ouïe, j'ai juste rien trouver d'autre, alors j'ai DIY.
 
-Todo:
+Comment ca marche pas
+---------------------
+
+On s'entend, ca marche pour moi. Ca prend wget, id3v2 pi that's it, le reste
+c'est des regex ben sales. Sinon ouvrez des bogues.
+
+Todo
+----
  - pogner des fichiers tu seul sur bandcamp comme 
      http://unfun.bandcamp.com/track/airbag
  - être capable de trimmer les albums sur youtube à partir des descriptions
@@ -28,5 +39,4 @@ Todo:
  - soundcloud, deezer, autres charognes mercantiles vous êtes les nexts.
  - faire un framework plus général
 
-Si y'a d'autre shit pour faire ca, faites signe, je suis toute ouïe, j'ai
-juste rien trouver d'autre, pi ca me faisait chier. 
+
