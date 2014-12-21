@@ -15,7 +15,7 @@ use JSON;
 $tempdir = File::Temp->newdir();
 
 # FIXME: this should be an argument 
-system("wget http://pearstheband.bandcamp.com/album/go-to-prison -O " . $tempdir . "/index.html");
+system("wget http://unfun.bandcamp.com/track/airbag -O " . $tempdir . "/index.html");
 
 # we just get use some really easy to spot (for grep :D) lines
 # and we are taking just that part of the file where the array
@@ -44,7 +44,11 @@ print Dumper(@perl);
 # therefore we're using system(@args), if you're doing
 # anything escape those chars!
 my $album_title = $perl[0]{'current'}{'title'};
+# But you can't have a backslash in a filename:
+# http://stackoverflow.com/questions/9847288/is-it-possible-to-use-in-a-filename
+$album_title =~ s/\//-/g; 
 my $band_name = $perl[0]{'artist'};
+$band_name =~ s/\//-/g; 
 
 $dir = "$tempdir/$band_name - $album_title";
 
@@ -54,13 +58,17 @@ mkdir $dir;
 #print Dumper($perl[0]{'trackinfo'}[0]);
 foreach $track (@{$perl[0]{'trackinfo'}}) {
    $title = @{$track}{'title'};
+   $title =~ s/\//-/g; 
    $track_num = @{$track}{'track_num'};
    print("wget '" . @{@{$track}{'file'}}{'mp3-128'} . "' -O \"" . $dir . "/" . "$track_num - $title.mp3" . "\"\n");
    # just in case they run fail to ban, we should wait 30sec
    # however, the files 302 to some other path, so fuck this
    # shit, we have to wait for _seconds _between downloads. 
+   my $url = @{@{$track}{'file'}}{'mp3-128'};
    @args = ("wget", @{@{$track}{'file'}}{'mp3-128'}, "-O", $dir . "/" . "$track_num - $title.mp3");  
    system(@args);
+   # sometimes its okay, sometime its not, it must depend on
+   # what they're provided by the band
    @args = ('id3v2', '-a', $band_name, '-t', $title, '-A', $album_title, '-T', $track_num, "$dir/$track_num - $title.mp3");
    system(@args);
 }
