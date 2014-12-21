@@ -3,7 +3,7 @@
 use File::Temp;
 use Data::Dumper;
 use JSON;
-
+use Getopt::Long;
 # SUPPORT THE FUCKING BANDS YOU TOOLS !
 # Its a fucking sham that they used bandcamp that
 # doesn't have support for html5 player (how hard
@@ -14,8 +14,11 @@ use JSON;
 
 $tempdir = File::Temp->newdir();
 
+my $notidy = '';	# option variable with default value (false)
+GetOptions ('notidy' => \$notidy);
+
 # FIXME: this should be an argument 
-system("wget http://unfun.bandcamp.com/track/airbag -O " . $tempdir . "/index.html");
+system("wget http://unfun.bandcamp.com/album/pain-prescription-e-p -O " . $tempdir . "/index.html");
 
 # we just get use some really easy to spot (for grep :D) lines
 # and we are taking just that part of the file where the array
@@ -84,4 +87,7 @@ system(@args);
 @args = ("mv", $dir, ".");
 system(@args);
 
-rmdir $tmpdir
+if (!$notidy) {
+  print "here";
+ # rmdir $tmpdir
+}
