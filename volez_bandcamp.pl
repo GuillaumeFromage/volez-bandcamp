@@ -18,7 +18,7 @@ my $notidy = '';	# option variable with default value (false)
 GetOptions ('notidy' => \$notidy);
 
 # FIXME: this should be an argument 
-system("wget http://unfun.bandcamp.com/album/pain-prescription-e-p -O " . $tempdir . "/index.html");
+system("wget http://marthadiy.bandcamp.com/album/courting-strong -O " . $tempdir . "/index.html");
 
 # we just get use some really easy to spot (for grep :D) lines
 # and we are taking just that part of the file where the array
