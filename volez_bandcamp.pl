@@ -12,11 +12,10 @@ use JSON;
 # that bandcamp is shit, not that the musicians
 # are bad.
 
-# FIXME: I just don't wanna pollute my /tmp with a whole bunch of random junk
-$tempdir = 'farts'; # File::Temp->newdir();
+$tempdir = File::Temp->newdir();
 
 # FIXME: this should be an argument 
-#system("wget http://pearstheband.bandcamp.com/album/go-to-prison -O " . $tempdir . "/index.html");
+system("wget http://pearstheband.bandcamp.com/album/go-to-prison -O " . $tempdir . "/index.html");
 
 # we just get use some really easy to spot (for grep :D) lines
 # and we are taking just that part of the file where the array
@@ -41,30 +40,40 @@ my @perl = from_json($working_with);
 
 print Dumper(@perl); 
 
+# this isn't "shell safe" as they can contain ' and shit,
+# therefore we're using system(@args), if you're doing
+# anything escape those chars!
 my $album_title = $perl[0]{'current'}{'title'};
-$album_title =~ s/\'/\\\'/g;
 my $band_name = $perl[0]{'artist'};
-$band_name =~ s/\'/\\\'/g;
+
 $dir = "$tempdir/$band_name - $album_title";
+
 #FIXME fail gracefully if not able to create directory
 mkdir $dir;
+
 #print Dumper($perl[0]{'trackinfo'}[0]);
 foreach $track (@{$perl[0]{'trackinfo'}}) {
    $title = @{$track}{'title'};
-#   $title =~ s/\'/\\\'/g;
    $track_num = @{$track}{'track_num'};
    print("wget '" . @{@{$track}{'file'}}{'mp3-128'} . "' -O \"" . $dir . "/" . "$track_num - $title.mp3" . "\"\n");
-   # just in case they run fail to ban, we retry every 30 seconds
-   @args = ("wget", @{@{$track}{'file'}}{'mp3-128'}, "-w", "30", "-O", $dir . "/" . "$track_num - $title");  
+   # just in case they run fail to ban, we should wait 30sec
+   # however, the files 302 to some other path, so fuck this
+   # shit, we have to wait for _seconds _between downloads. 
+   @args = ("wget", @{@{$track}{'file'}}{'mp3-128'}, "-O", $dir . "/" . "$track_num - $title.mp3");  
    system(@args);
-   sleep 10;
+   @args = ('id3v2', '-a', $band_name, '-t', $title, '-A', $album_title, '-T', $track_num, "$dir/$track_num - $title.mp3");
+   system(@args);
 }
 
 # we get the album art
 #FIXME the file isn't necessarily .jpg
+@args = ("wget", $perl[0]{'artFullsizeUrl'}, "-O", $dir . "/" . "Folder.jpg");
+
 print("wget " . $perl[0]{'artFullsizeUrl'} . " -O \"" . $dir . "/" . "Folder.jpg" . "\"\n");
-#system("wget " . $perl[0]{'artFullsizeUrl'} . " -w 30 -O '" . $dir . "/" . "Folder.jpg'");
+system(@args);
 
-print $dir;
+# FIXME we should be able to dump this anywhere
+@args = ("mv", $dir, ".");
+system(@args);
 
-#FIXME delete that temp_dir, just move to where it goes
+rmdir $tmpdir
