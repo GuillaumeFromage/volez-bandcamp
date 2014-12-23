@@ -16,10 +16,16 @@ $tempdir = File::Temp->newdir();
 
 my $notidy = '';	# option variable with default value (false)
 my $verbose = '';
-GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose);
+my $url = '';
+GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose, 'url=s' => \$url);
+
+if(!$url) {
+    print("Please give an bandcamp album url!");
+    exit(1);
+}
 
 # FIXME: this should be an argument 
-system("wget http://marthadiy.bandcamp.com/album/courting-strong -O " . $tempdir . "/index.html");
+system("wget " . $url . " -O " . $tempdir . "/index.html");
 
 # we just get use some really easy to spot (for grep :D) lines
 # and we are taking just that part of the file where the array
