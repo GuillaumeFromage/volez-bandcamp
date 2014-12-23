@@ -15,7 +15,8 @@ use Getopt::Long;
 $tempdir = File::Temp->newdir();
 
 my $notidy = '';	# option variable with default value (false)
-GetOptions ('notidy' => \$notidy);
+my $verbose = '';
+GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose);
 
 # FIXME: this should be an argument 
 system("wget http://marthadiy.bandcamp.com/album/courting-strong -O " . $tempdir . "/index.html");
@@ -41,7 +42,9 @@ $working_with = '{' . $working_with . '}';
 
 my @perl = from_json($working_with);
 
-print Dumper(@perl); 
+if($verbose) {
+    print Dumper(@perl); 
+}
 
 # this isn't "shell safe" as they can contain ' and shit,
 # therefore we're using system(@args), if you're doing
