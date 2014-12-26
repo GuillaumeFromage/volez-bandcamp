@@ -15,10 +15,17 @@ use Getopt::Long;
 $tempdir = File::Temp->newdir();
 
 my $notidy = '';	# option variable with default value (false)
-GetOptions ('notidy' => \$notidy);
+my $verbose = '';
+my $url = '';
+GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose, 'url=s' => \$url);
+
+if(!$url) {
+    print("Please give an bandcamp album url!");
+    exit(1);
+}
 
 # FIXME: this should be an argument 
-system("wget http://marthadiy.bandcamp.com/album/courting-strong -O " . $tempdir . "/index.html");
+system("wget " . $url . " -O " . $tempdir . "/index.html");
 
 # we just get use some really easy to spot (for grep :D) lines
 # and we are taking just that part of the file where the array
@@ -41,7 +48,9 @@ $working_with = '{' . $working_with . '}';
 
 my @perl = from_json($working_with);
 
-print Dumper(@perl); 
+if($verbose) {
+    print Dumper(@perl); 
+}
 
 # this isn't "shell safe" as they can contain ' and shit,
 # therefore we're using system(@args), if you're doing
