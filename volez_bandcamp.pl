@@ -4,11 +4,11 @@ use File::Temp;
 use Data::Dumper;
 use JSON;
 use Getopt::Long;
-$tempdir = File::Temp->newdir();
 
 my $notidy = '';	# option variable with default value (false)
 my $verbose = '';
 my $url = '';
+
 
 sub usage() {
     print <<EOF
@@ -29,6 +29,8 @@ EOF
 
 GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose, 'url=s' => \$url)
   or usage();
+
+$tempdir = File::Temp->newdir(CLEANUP => $notidy?0:1);
 
 if(!$url) {
     usage();
@@ -107,7 +109,7 @@ system(@args);
 @args = ("mv", $dir, ".");
 system(@args);
 
-if (!$notidy) {
-  print "here";
- # rmdir $tmpdir
+if ($notidy) {
+  print "the html file is in $dir\n";
 }
+
