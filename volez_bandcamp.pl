@@ -4,22 +4,33 @@ use File::Temp;
 use Data::Dumper;
 use JSON;
 use Getopt::Long;
-# SUPPORT THE FUCKING BANDS YOU TOOLS !
-# Its a fucking sham that they used bandcamp that
-# doesn't have support for html5 player (how hard
-# can that be ?), and its a sham I spend a day to
-# get music from my friends, but fuck, its just 
-# that bandcamp is shit, not that the musicians
-# are bad.
-
 $tempdir = File::Temp->newdir();
 
 my $notidy = '';	# option variable with default value (false)
 my $verbose = '';
 my $url = '';
-GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose, 'url=s' => \$url);
+
+sub usage() {
+    print <<EOF
+Usage: $0 [ --verbose ] [ --notidy ] --url http://example.bandcamp.com
+
+SUPPORT THE FUCKING BANDS YOU TOOLS !
+
+Its a fucking sham that they used bandcamp that
+doesn't have support for html5 player (how hard
+can that be ?), and its a sham I spend a day to
+get music from my friends, but fuck, its just 
+that bandcamp is shit, not that the musicians
+are bad.
+EOF
+;
+}
+
+GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose, 'url=s' => \$url)
+  or usage();
 
 if(!$url) {
+    usage();
     print("Please give an bandcamp album url!");
     exit(1);
 }
