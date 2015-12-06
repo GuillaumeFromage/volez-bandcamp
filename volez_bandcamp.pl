@@ -22,6 +22,7 @@ can that be ?), and its a sham I spend a day to
 get music from my friends, but fuck, its just 
 that bandcamp is shit, not that the musicians
 are bad.
+
 EOF
 ;
 }
@@ -31,8 +32,7 @@ GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose, 'url=s' => \$url)
 
 if(!$url) {
     usage();
-    print("Please give an bandcamp album url!");
-    exit(1);
+    die("Please give an bandcamp album url!\n");
 }
 
 # FIXME: this should be an argument 
