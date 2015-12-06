@@ -6,13 +6,12 @@ use JSON;
 use Getopt::Long;
 $tempdir = File::Temp->newdir();
 
-my $notidy = '';	# option variable with default value (false)
 my $verbose = '';
 my $url = '';
 
 sub usage() {
     print <<EOF
-Usage: $0 [ --verbose ] [ --notidy ] --url http://example.bandcamp.com
+Usage: $0 [ --verbose ] --url http://example.bandcamp.com
 
 SUPPORT THE FUCKING BANDS YOU TOOLS !
 
@@ -27,7 +26,7 @@ EOF
 ;
 }
 
-GetOptions ('notidy' => \$notidy, 'verbose' => \$verbose, 'url=s' => \$url)
+GetOptions ('verbose' => \$verbose, 'url=s' => \$url)
   or usage();
 
 if(!$url) {
@@ -106,8 +105,3 @@ system(@args);
 # FIXME we should be able to dump this anywhere
 @args = ("mv", $dir, ".");
 system(@args);
-
-if (!$notidy) {
-  print "here";
- # rmdir $tmpdir
-}
