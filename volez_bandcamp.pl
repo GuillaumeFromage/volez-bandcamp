@@ -110,6 +110,6 @@ system(@args);
 system(@args);
 
 if ($notidy) {
-  print "the html file is in $dir\n";
+  print "The html file is in $dir\n";
 }
 
