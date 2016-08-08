@@ -50,6 +50,9 @@ $working_with = `A=\$((\$(grep -n "if ( window.FacebookData ) {" $tempdir/index.
 # with vim I've just did:
 # the fucking asdf: "fu" => "asdf": "fu"
 $working_with =~ s/^(\s*)([-_a-zA-Z0-9]+)(\s*):/$1"$2"$3:/mg; 
+
+# remove the // comments and # when they are not enclosed in quotes
+$working_with =~ s#^([^"]*("[^"]*"[^"]*)*)\/\/(.*)\n#$1\n#mg; 
 # odd escaping
 $working_with =~ s/\\"/\\\\\\"/mg;
 $working_with =~ s/\\r/\\\\r/mg;
