@@ -43,16 +43,26 @@ system("wget " . $url . " -O " . $tempdir . "/index.html");
 # we just get use some really easy to spot (for grep :D) lines
 # and we are taking just that part of the file where the array
 # that contains all the data gets declared
-$working_with = `A=\$((\$(grep -n "if ( window.FacebookData ) {" $tempdir/index.html | cut -d ":" -f 1)-5)) ; B=\$((\$(grep -n "var TralbumData" $tempdir/index.html | cut -d ":" -f 1)+3)) ; head -n \$A $tempdir/index.html | tail -n \$((\$A-\$B))`;
+
+# exclusions: we remove some lines that are not relevant to us
+$exclusions = " | grep -v item_type  "; 
+
+$working_with = `A=\$((\$(grep -n "if ( window.FacebookData ) {" $tempdir/index.html | cut -d ":" -f 1)-5)) ; B=\$((\$(grep -n "var TralbumData" $tempdir/index.html | cut -d ":" -f 1)+3)) ; head -n \$A $tempdir/index.html | tail -n \$((\$A-\$B)) $exclusions`;
 
 # with my eagle eye, I saw that it was almost JSON, and we 
 # just need to regex it a couple of time to get valid JSON,
 # with vim I've just did:
+
+# remove the // comments when they are not enclosed in quotes
+
+# HAHA, yeah, its fucked. Please someone figure this out... this regex works fine on 
+# 'url: "http://ahna.bandcamp.com" + "/album/perpetual-warfare-12-ep-out-june-2015",' 
+# but not on 'url: "http://marylin-rambo.bandcamp.com" + "/album/baleine-nourrir",' 
+# $working_with =~ s#^([^"]*("[^"]*"[^"]*)*)\/\/(.*)\n#$1\n#mg;  
+
 # the fucking asdf: "fu" => "asdf": "fu"
 $working_with =~ s/^(\s*)([-_a-zA-Z0-9]+)(\s*):/$1"$2"$3:/mg; 
 
-# remove the // comments and # when they are not enclosed in quotes
-$working_with =~ s#^([^"]*("[^"]*"[^"]*)*)\/\/(.*)\n#$1\n#mg; 
 # odd escaping
 $working_with =~ s/\\"/\\\\\\"/mg;
 $working_with =~ s/\\r/\\\\r/mg;
