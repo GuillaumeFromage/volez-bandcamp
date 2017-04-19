@@ -97,6 +97,12 @@ mkdir $dir;
 foreach $track (@{$perl[0]{'trackinfo'}}) {
    $title = @{$track}{'title'};
    $title =~ s/\//-/g; 
+   # Some files might not be possible to play on the page. They won't have a
+   # file info hash then.
+   if (ref @{$track}{'file'} ne ref {}) {
+     print("Info: no file found for " . $title . ", skipping\n");
+     next;
+   }
    $track_num = @{$track}{'track_num'};
    print("wget '" . @{@{$track}{'file'}}{'mp3-128'} . "' -O \"" . $dir . "/" . "$track_num - $title.mp3" . "\"\n");
    # just in case they run fail to ban, we should wait 30sec
