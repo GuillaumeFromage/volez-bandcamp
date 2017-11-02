@@ -109,7 +109,7 @@ foreach $track (@{$perl[0]{'trackinfo'}}) {
    # however, the files 302 to some other path, so fuck this
    # shit, we have to wait for _seconds _between downloads. 
    my $url = @{@{$track}{'file'}}{'mp3-128'};
-   @args = ("wget", 'https:' . @{@{$track}{'file'}}{'mp3-128'}, "-O", $dir . "/" . "$track_num - $title.mp3");  
+   @args = ("wget", @{@{$track}{'file'}}{'mp3-128'}, "-O", $dir . "/" . "$track_num - $title.mp3");  
    system(@args);
    # sometimes its okay, sometime its not, it must depend on
    # what they're provided by the band
