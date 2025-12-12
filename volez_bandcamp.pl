@@ -45,10 +45,29 @@ system("wget " . $url . " -O " . $tempdir . "/index.html");
 # that contains all the data gets declared
 
 # exclusions: we remove some lines that are not relevant to us
-$exclusions = " | grep -v item_type  "; 
+#$exclusions = " | grep -v item_type  "; 
 
-$working_with = `A=\$((\$(grep -n "if ( window.FacebookData ) {" $tempdir/index.html | cut -d ":" -f 1)-5)) ; B=\$((\$(grep -n "var TralbumData" $tempdir/index.html | cut -d ":" -f 1)+3)) ; head -n \$A $tempdir/index.html | tail -n \$((\$A-\$B)) $exclusions`;
+#$working_with = `A=\$((\$(grep -n "if ( window.FacebookData ) {" $tempdir/index.html | cut -d ":" -f 1)-5)) ; B=\$((\$(grep -n "data-tralbum=" $tempdir/index.html | cut -d ":" -f 1)+3)) ; head -n \$A $tempdir/index.html | tail -n \$((\$A-\$B)) $exclusions`;
 
+#whatever, it works
+$working_with = `grep curious $tempdir/index.html` ;
+$working_with =~ s/.*data-tralbum="(.*)".*/\1/g; 
+#print "fuck" . $working_with;
+@a = split(/"/, $working_with);
+$working_with=@a[0];
+#open(my $pipe, '|-', "php -r 'print(html_entity_decode(file_get_contents(\"php://stdin\")));'");
+#print $pipe $working_with
+$working_with = `echo "$working_with" | php -r 'print(html_entity_decode(file_get_contents(\"php://stdin\")));'`;
+
+print($working_with);
+#$working_with = `echo $working_with | php -r 'print(html_entity_decode(file_get_contents("php://stdin")));'` ;
+#print "fuck" . $working_with;
+#$working_with = `grep curious $tempdir/index.html`;
+#print $working_with;
+#$working_with =~ s/.*data-tralbum="\(.*\)".*/\1/g; 
+#print $working_with;
+#print $working_with;
+#return 0;
 # with my eagle eye, I saw that it was almost JSON, and we 
 # just need to regex it a couple of time to get valid JSON,
 # with vim I've just did:
@@ -61,16 +80,19 @@ $working_with = `A=\$((\$(grep -n "if ( window.FacebookData ) {" $tempdir/index.
 # $working_with =~ s#^([^"]*("[^"]*"[^"]*)*)\/\/(.*)\n#$1\n#mg;  
 
 # the fucking asdf: "fu" => "asdf": "fu"
-$working_with =~ s/^(\s*)([-_a-zA-Z0-9]+)(\s*):/$1"$2"$3:/mg; 
+#$working_with =~ s/^(\s*)([-_a-zA-Z0-9]+)(\s*):/$1"$2"$3:/mg; 
 
 # odd escaping
-$working_with =~ s/\\"/\\\\\\"/mg;
-$working_with =~ s/\\r/\\\\r/mg;
-$working_with =~ s/\\n/\\\\n/mg;
+#$working_with =~ s/\\"/\\\\\\"/mg;
+$working_with =~ s/\r/ /mg;
+$working_with =~ s/\n/ /mg;
+#$working_with =~ s/\\r/\\\\r/mg;
+#$working_with =~ s/\\n/\\\\n/mg;
 # odd javascript construct in there 
-$working_with =~ s/" \+ "//mg;  
+#$working_with =~ s/" \+ "//mg;  
 # oh, and it needs to be in brackets
-$working_with = '{' . $working_with . '}';
+#$working_with = '{' . $working_with . '}';
+
 
 my @perl = from_json($working_with);
 
@@ -93,7 +115,7 @@ $dir = "$tempdir/$band_name - $album_title";
 #FIXME fail gracefully if not able to create directory
 mkdir $dir;
 
-#print Dumper($perl[0]{'trackinfo'}[0]);
+print Dumper($perl[0]{'trackinfo'}[0]);
 foreach $track (@{$perl[0]{'trackinfo'}}) {
    $title = @{$track}{'title'};
    $title =~ s/\//-/g; 
