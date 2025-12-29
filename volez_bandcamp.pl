@@ -57,22 +57,11 @@ $working_with =~ s/.*data-tralbum="(.*)".*/\1/g;
 $working_with=@a[0];
 #open(my $pipe, '|-', "php -r 'print(html_entity_decode(file_get_contents(\"php://stdin\")));'");
 #print $pipe $working_with
+#TODO remove php dependency
 $working_with = `echo "$working_with" | php -r 'print(html_entity_decode(file_get_contents(\"php://stdin\")));'`;
 
-print($working_with);
-#$working_with = `echo $working_with | php -r 'print(html_entity_decode(file_get_contents("php://stdin")));'` ;
-#print "fuck" . $working_with;
-#$working_with = `grep curious $tempdir/index.html`;
-#print $working_with;
-#$working_with =~ s/.*data-tralbum="\(.*\)".*/\1/g; 
-#print $working_with;
-#print $working_with;
-#return 0;
 # with my eagle eye, I saw that it was almost JSON, and we 
-# just need to regex it a couple of time to get valid JSON,
-# with vim I've just did:
-
-# remove the // comments when they are not enclosed in quotes
+# just need to regex it a couple of time to get valid JSON
 
 # HAHA, yeah, its fucked. Please someone figure this out... this regex works fine on 
 # 'url: "http://ahna.bandcamp.com" + "/album/perpetual-warfare-12-ep-out-june-2015",' 
@@ -80,10 +69,8 @@ print($working_with);
 # $working_with =~ s#^([^"]*("[^"]*"[^"]*)*)\/\/(.*)\n#$1\n#mg;  
 
 # the fucking asdf: "fu" => "asdf": "fu"
-#$working_with =~ s/^(\s*)([-_a-zA-Z0-9]+)(\s*):/$1"$2"$3:/mg; 
 
 # odd escaping
-#$working_with =~ s/\\"/\\\\\\"/mg;
 $working_with =~ s/\r/ /mg;
 $working_with =~ s/\n/ /mg;
 #$working_with =~ s/\\r/\\\\r/mg;
@@ -141,9 +128,9 @@ foreach $track (@{$perl[0]{'trackinfo'}}) {
 
 # we get the album art
 #FIXME the file isn't necessarily .jpg
-@args = ("wget", $perl[0]{'artFullsizeUrl'}, "-O", $dir . "/" . "Folder.jpg");
+@args = ("wget", "https://f4.bcbits.com/img/a" . $perl[0]{'art_id'} . "_10.jpg", "-O", $dir . "/" . "Folder.jpg");
 
-print("wget " . $perl[0]{'artFullsizeUrl'} . " -O \"" . $dir . "/" . "Folder.jpg" . "\"\n");
+print("wget", "https://f4.bcbits.com/img/a" . $perl[0]{'art_id'} . "_10.jpg ". "-O ". $dir . "/" . "Folder.jpg\n");
 system(@args);
 
 # FIXME we should be able to dump this anywhere
